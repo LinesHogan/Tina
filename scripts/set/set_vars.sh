@@ -48,7 +48,7 @@ export CACHE_DIR="${PROJECT_DIR}/.cache"
 export WANDB_CACHE_DIR="${CACHE_DIR}"
 export TRITON_CACHE_DIR="${CACHE_DIR}/triton_cache"
 
-export HF_TOKEN=""
+export HF_TOKEN="no token"
 git config --global credential.helper store
 huggingface-cli login --token $HF_TOKEN --add-to-git-credential
 
