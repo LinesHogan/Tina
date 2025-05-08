@@ -11,8 +11,8 @@ mamba clean -a -y
 pip install --upgrade pip
 pip cache purge
 
-mamba install cuda -c nvidia/label/cuda-11.8.0 -y
-mamba install gcc gxx -c conda-forge -y
+# mamba install cuda -c nvidia/label/cuda-11.8.0 -y
+# mamba install gxx -c conda-forge -y
 pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
 
 pip install xformers==0.0.28.post3 --index-url https://download.pytorch.org/whl/cu118

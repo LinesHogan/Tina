@@ -17,8 +17,8 @@ export OMP_NUM_THREADS=1
 
 ## basic setup for the env
 export CLUSTER_NAME=""
-export HOME_PREFIX="TODO"
-export PROJECT_PREFIX="TODO"
+export HOME_PREFIX="/home/zengyuanhao/DiversGRPO"
+export PROJECT_PREFIX="HilbertConstraint"
 export SCRATCH_PREFIX="TODO"
 mkdir -p "${HOME_PREFIX}" "${PROJECT_PREFIX}" "${SCRATCH_PREFIX}"
 
@@ -38,7 +38,7 @@ export OUTPUT_DIR="${PROJECT_DIR}/outputs"
 export LOGGING_DIR="${PROJECT_DIR}/logs"
 mkdir -p "${CKPT_DIR}" "${DATA_DIR}" "${OUTPUT_DIR}" "${LOGGING_DIR}"
 
-export WANDB_API_KEY="TODO"
+export WANDB_API_KEY="3fa0b756a006b2878253da2962458a706868a219"
 export WANDB_PROJECT="${TOPIC_NAME}"
 export WANDB_DIR="${OUTPUT_DIR}"
 
@@ -48,7 +48,7 @@ export CACHE_DIR="${PROJECT_DIR}/.cache"
 export WANDB_CACHE_DIR="${CACHE_DIR}"
 export TRITON_CACHE_DIR="${CACHE_DIR}/triton_cache"
 
-export HF_TOKEN="TODO"
+export HF_TOKEN="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"
 git config --global credential.helper store
 huggingface-cli login --token $HF_TOKEN --add-to-git-credential
 

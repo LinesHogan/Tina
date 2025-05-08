@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 MAMBA_ENV="tina"
 eval "$(mamba shell hook --shell bash)" && mamba activate "${MAMBA_ENV}"
 echo "START TIME: $(date)"
@@ -16,9 +15,10 @@ echo "Number of GPUs: ${GPU_COUNT}"
 echo ""
 
 MODEL_NAME="DeepSeek-R1-Distill-Qwen-1.5B"
+DATASET_NAME="curated_limr_32_rank_pissa" # baseline
 
 ## Main datasets
-DATASET_NAME="curated_deepscaler"
+#DATASET_NAME="curated_deepscaler"
 #DATASET_NAME="curated_still"
 #DATASET_NAME="curated_open_rs3"
 #DATASET_NAME="curated_open_rs2"
@@ -33,13 +33,13 @@ DATASET_NAME="curated_deepscaler"
 #DATASET_NAME="curated_limr_large_lr_ablation"
 #DATASET_NAME="curated_limr_small_lr_ablation"
 #DATASET_NAME="curated_limr_large_rank_ablation"
-#DATASET_NAME="curated_limr_medium_rank_ablation"
+# DATASET_NAME="curated_limr_medium_rank_ablation"
 #DATASET_NAME="curated_limr_small_rank_ablation"
 #DATASET_NAME="curated_limr_tiny_rank_ablation"
 #DATASET_NAME="curated_open_rs3_drgrpo_ablation"
 
-PY_SCRIPT="./tina/post_train_hf/grpo.py"
-PY_CONFIG="./recipes/${MODEL_NAME}/grpo/model_${DATASET_NAME}.yaml"
+PY_SCRIPT="./tina/post_train_hf/diversGRPO.py"
+PY_CONFIG="./recipes/${MODEL_NAME}/diversGRPO/model_${DATASET_NAME}.yaml"
 ACCELERATE_DS_CONFIG="./recipes/accelerate_ds_cfgs/ds_zero2.yaml"
 
 echo ""
