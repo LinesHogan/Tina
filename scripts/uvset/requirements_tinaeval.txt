@@ -1,0 +1,46 @@
+# PyTorch (Ensure your manually installed CUDA 11.8 is compatible)
+--index-url https://download.pytorch.org/whl/cu118
+torch==2.5.1
+torchvision==0.20.1
+torchaudio==2.5.1
+
+# xformers
+xformers==0.0.28.post3
+
+# vLLM from URL (Consider if a Python 3.11 compatible wheel is needed/available if cp38 is for py3.8)
+# The original script uses a cp38 wheel for both py3.10 and py3.11 envs.
+# This might be problematic for the py3.11 environment if the wheel isn't compatible.
+# You may need to find a vLLM wheel for Python 3.11 or build from source.
+# For now, keeping original:
+https://github.com/vllm-project/vllm/releases/download/v0.7.2/vllm-0.7.2+cu118-cp38-abi3-manylinux1_x86_64.whl
+
+flash-attn==2.7.3 --no-build-isolation
+
+accelerate==1.4.0
+datasets>=3.2.0
+deepspeed==0.15.4
+distilabel[vllm,ray,openai]>=1.5.2
+e2b-code-interpreter>=1.0.5
+einops>=0.8.0
+flake8>=6.0.0
+huggingface_hub
+hf_transfer>=0.1.4
+isort>=5.12.0
+langdetect
+latex2sympy2_extended>=1.0.6
+liger_kernel==0.5.3
+# For git dependencies, uv syntax is: <package_name> @ git+https://github.com/...@commit_hash
+lighteval @ git+https://github.com/huggingface/lighteval.git@ed084813e0bd12d82a06d9f913291fdbee774905
+math-verify==0.5.2
+packaging>=23.0
+parameterized>=0.9.0
+peft>=0.14.0
+pytest
+python-dotenv
+ruff>=0.9.0
+safetensors>=0.3.3
+sentencepiece>=0.1.99
+transformers==4.49.0
+vllm==0.7.2 # This might conflict with the URL install if the versions differ or if one is source and other is wheel
+trl @ git+https://github.com/huggingface/trl.git@69ad852e5654a77f1695eb4c608906fe0c7e8624
+wandb
