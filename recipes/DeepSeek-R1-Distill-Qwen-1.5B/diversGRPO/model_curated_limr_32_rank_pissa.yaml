@@ -31,7 +31,7 @@ lora_target_modules:
 bf16: true
 use_vllm: true
 vllm_device: cuda:0
-vllm_gpu_memory_utilization: 0.7
+vllm_gpu_memory_utilization: 0.8
 vllm_max_model_len: 4608
 gradient_accumulation_steps: 4
 gradient_checkpointing: true
@@ -56,7 +56,7 @@ max_steps: 360 # use 360 for lr scheduler but stop at 180 steps
 num_generations: 8
 num_train_epochs: 1
 overwrite_output_dir: true
-per_device_train_batch_size: 4
+per_device_train_batch_size: 8
 report_to:
 - wandb
 
