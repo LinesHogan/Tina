@@ -16,7 +16,7 @@ import os
 import textwrap
 import warnings
 from collections import defaultdict
-from typing import Any, Callable, Optional, Sized, Union
+from typing import Any, Callable, Optional, Sized, Union, Tuple, List, Dict
 from unittest.mock import patch
 
 import torch
@@ -364,6 +364,8 @@ class GRPOTrainer(Trainer):
         # it's safer to set it in all cases.
         set_seed(args.seed, device_specific=True)
 
+        current_grpo_args: GRPOConfig = self.args
+
         if self.use_vllm:
             if not is_vllm_available():
                 raise ImportError(
@@ -413,9 +415,67 @@ class GRPOTrainer(Trainer):
                         enable_prefix_caching=True,
                         max_model_len=self.args.vllm_max_model_len,
                     )
+                
+                # below add logits processor
+                    
+                logits_processor_functions = []
+                vllm_sampling_temperature = current_grpo_args.temperature # 默认使用配置中的temperature
+
+                if current_grpo_args.use_custom_temp_sampling:
+                    # 如果启用了自定义温度逻辑，则vLLM的主温度参数设为1.0
+                    vllm_sampling_temperature = 1.0
+
+                    # 从配置中获取参数以构建闭包
+                    # Positional sampling config
+                    use_pos_temp = current_grpo_args.use_positional_temp_sampling
+                    pos_temp_map = {}
+                    if use_pos_temp and current_grpo_args.positional_temp_config:
+                        pos_temp_map = {pos: temp for pos, temp in current_grpo_args.positional_temp_config}
+
+                    # Conditional token sampling config
+                    use_cond_temp = current_grpo_args.use_conditional_token_temp_sampling
+                    cond_trigger_ids = set()
+                    if use_cond_temp and current_grpo_args.conditional_temp_trigger_token_ids:
+                        cond_trigger_ids = set(current_grpo_args.conditional_temp_trigger_token_ids)
+                    cond_temp_val = current_grpo_args.conditional_temp_value
+
+                    base_temp = current_grpo_args.base_sampling_temperature
+
+                    # 定义 logits_processor 函数
+                    def _custom_temperature_logits_processor(token_ids: List[int], logits: torch.Tensor) -> torch.Tensor:
+                        effective_temperature = base_temp
+                        current_generated_length = len(token_ids) # 这是已生成token的数量，下一个token的位置索引是 current_generated_length
+
+                        # 优先应用位置相关的温度设置
+                        if use_pos_temp and current_generated_length in pos_temp_map:
+                            effective_temperature = pos_temp_map[current_generated_length]
+                        # 如果位置温度未应用，再检查条件token温度
+                        elif use_cond_temp and cond_trigger_ids:
+                            if logits.numel() > 0: # 确保 logits 不为空
+                                greedy_next_token_id = torch.argmax(logits, dim=-1).item()
+                                if greedy_next_token_id in cond_trigger_ids:
+                                    effective_temperature = cond_temp_val
+
+                        # 应用温度调整 logits = logits / T
+                        # 必须确保 effective_temperature 是正数
+                        if effective_temperature <= 1e-7: # 防止除以零或极小值导致NaN/inf
+                            # 当温度趋近于0时，行为类似贪婪采样。
+                            # vLLM本身可能会对temperature=0做特殊处理。
+                            # 为安全起见，使用一个很小的正数。
+                            # 或者，如果 T=0 意味着绝对贪婪，可以返回one-hot的logits，但这更复杂。
+                            # 此处简单地除以一个很小的正数。
+                            return logits / max(effective_temperature, 1e-7)
+
+                        return logits / effective_temperature
+
+                    # 只有在至少启用一种自定义采样时才添加处理器
+                    if use_pos_temp or use_cond_temp:
+                        logits_processor_functions.append(_custom_temperature_logits_processor)
+
                 self.sampling_params = SamplingParams(
-                    temperature=args.temperature,
+                    temperature=vllm_sampling_temperature, # 如果自定义则为1.0，否则为配置值
                     max_tokens=self.max_completion_length,
+                    logits_processors=logits_processor_functions if logits_processor_functions else None,
                 )
 
             self._last_loaded_step = 0  # tag to avoid useless loading during grad accumulation
@@ -428,7 +488,7 @@ class GRPOTrainer(Trainer):
             self.generation_config = GenerationConfig(
                 max_new_tokens=self.max_completion_length,
                 do_sample=True,
-                temperature=args.temperature,
+                temperature=current_grpo_args.temperature,
                 pad_token_id=processing_class.pad_token_id,
             )
 

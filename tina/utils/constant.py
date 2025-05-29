@@ -13,7 +13,6 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_open_r1": "open-r1/OpenR1-Math-220k",  # default split 93.7k
     "curated_thoughts": "bethgelab/CuratedThoughts", # default split 66.1k
     # Ablation
-    "curated_limr_32_rank_lora": "GAIR/LIMR",
     "curated_limr_large_lr_ablation": "GAIR/LIMR",
     "curated_limr_small_lr_ablation": "GAIR/LIMR",
     "curated_limr_large_rank_ablation": "GAIR/LIMR",
@@ -21,4 +20,8 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_limr_small_rank_ablation": "GAIR/LIMR",
     "curated_limr_tiny_rank_ablation": "GAIR/LIMR",
     "curated_open_rs3_drgrpo_ablation": "knoveleng/open-rs",
+    # Experiments in diverseGRPO
+    "curated_limr_32_rank_lora": "GAIR/LIMR",
+    "curated_limr_32_rank_lora_divers": "GAIR/LIMR",
+    "curated_limr_32_rank_lora_divers_2": "knoveleng/open-rs",
 }

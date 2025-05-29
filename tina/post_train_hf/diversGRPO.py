@@ -3,6 +3,7 @@ from datasets import Dataset, load_dataset
 from datetime import datetime
 import logging
 import os
+from typing import Callable
 from peft import get_peft_model, LoraConfig, TaskType
 import sys
 import torch
@@ -153,7 +154,7 @@ def main():
     # Initialize the GRPO trainer
     #############################
 
-    RL_POST_TRAIN_REWARD_MAP = {
+    RL_POST_TRAIN_REWARD_MAP: dict[str, Callable[[list, list], list[float]]] = {
         "accuracy": accuracy_reward,
         "format": format_reward,
         "tag_count": tag_count_reward,

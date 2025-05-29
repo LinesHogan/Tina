@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, List, Tuple
 
 from transformers import TrainingArguments
 
@@ -257,4 +257,59 @@ class GRPOConfig(TrainingArguments):
     log_completions: bool = field(
         default=False,
         metadata={"help": "Whether to log the completions during training."},
+    )
+
+    # additional parameters for custom temperature sampling
+    use_custom_temp_sampling: bool = field(
+        default=False,
+        metadata={
+            "help": "Enable custom temperature sampling via logits processors. "
+                    "If True, the main 'temperature' in vLLM's SamplingParams will be set to 1.0, "
+                    "and the logic below will control the effective temperature for sampling."
+        },
+    )
+    base_sampling_temperature: float = field(
+        default=0.7, # 如果 `use_custom_temp_sampling` 为 True，在vLLM路径下，base_sampling_temperature 将覆盖 SamplingParams 的 temperature
+        metadata={
+            "help": "The base temperature to use for sampling when no special "
+                    "positional or conditional rules apply. Used by the custom logits processor."
+        },
+    )
+
+    # --- 1. 指定位置高温采样 ---
+    use_positional_temp_sampling: bool = field(
+        default=False,
+        metadata={"help": "Enable different temperature sampling at specified token positions."},
+    )
+    positional_temp_config: Optional[List[Tuple[int, float]]] = field(
+        default=None,
+        # 例如: [(0, 1.5), (2, 1.2)] 表示在生成的第0个token使用1.5的温度，第2个token使用1.2的温度。
+        # 位置是相对于生成序列的索引，0代表第一个生成的token。
+        metadata={
+            "help": "List of (position_index, temperature_value) tuples. "
+                    "Positions are 0-indexed for the *generated* sequence."
+        },
+    )
+
+    # --- 2. 若会贪婪采样出指定token时高温采样 ---
+    use_conditional_token_temp_sampling: bool = field(
+        default=False,
+        metadata={
+            "help": "Enable different temperature sampling if the greedy next token "
+                    "would have been one of the specified trigger tokens."
+        },
+    )
+    conditional_temp_trigger_token_ids: Optional[List[int]] = field(
+        default=None,
+        # 例如: [100, 200, 300]，如果下一个最可能的token是这些ID之一，则使用下面的温度
+        metadata={
+            "help": "List of token IDs that, if they were to be greedily sampled, "
+                    "trigger a different temperature for that generation step."
+        },
+    )
+    conditional_temp_value: float = field(
+        default=1.5, # 例如，触发时使用1.5的温度
+        metadata={
+            "help": "The temperature value to use when conditional token sampling is triggered."
+        },
     )
