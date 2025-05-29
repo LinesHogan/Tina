@@ -46,16 +46,30 @@ echo ""
 echo "Running ${PY_SCRIPT} on model ${MODEL_NAME} with dataset ${DATASET_NAME}"
 echo ""
 
+# Function to check if a port is in use
+is_port_in_use() {
+    netstat -tuln | grep -q ":$1 "
+    return $?
+}
+
+# Find available port starting from 29510
+PORT=29510
+while is_port_in_use $PORT; do
+    echo "Port $PORT is in use, trying the next port"
+    PORT=$((PORT + 1))
+done
+echo "Using port: $PORT"
+
 if [[ "${DATASET_NAME}" == "curated_thoughts" || "${DATASET_NAME}" == "curated_open_r1" || "${DATASET_NAME}" == "curated_open_rs3" || "${DATASET_NAME}" == "curated_open_rs3_drgrpo_ablation" ]]; then
-    ACCELERATE_LOG_LEVEL=info accelerate launch \
-        --config_file "${ACCELERATE_DS_CONFIG}" \
-        --main_process_port=29510 \
-        --num_processes="${GPU_COUNT}" "${PY_SCRIPT}" --config "${PY_CONFIG}" --cosine_max_len 3584
+        ACCELERATE_LOG_LEVEL=info accelerate launch \
+                --config_file "${ACCELERATE_DS_CONFIG}" \
+                --main_process_port=$PORT \
+                --num_processes="${GPU_COUNT}" "${PY_SCRIPT}" --config "${PY_CONFIG}" --cosine_max_len 3584
 else
-    ACCELERATE_LOG_LEVEL=info accelerate launch \
-        --config_file "${ACCELERATE_DS_CONFIG}" \
-        --main_process_port=29510 \
-        --num_processes="${GPU_COUNT}" "${PY_SCRIPT}" --config "${PY_CONFIG}" --cosine_max_len 4096
+        ACCELERATE_LOG_LEVEL=info accelerate launch \
+                --config_file "${ACCELERATE_DS_CONFIG}" \
+                --main_process_port=$PORT \
+                --num_processes="${GPU_COUNT}" "${PY_SCRIPT}" --config "${PY_CONFIG}" --cosine_max_len 4096
 fi
 
 echo "END TIME: $(date)"
