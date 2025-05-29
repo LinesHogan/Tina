@@ -55,7 +55,7 @@ else
     ACCELERATE_LOG_LEVEL=info accelerate launch \
         --config_file "${ACCELERATE_DS_CONFIG}" \
         --main_process_port=29510 \
-        --num_processes="${GPU_COUNT}" "${PY_SCRIPT}" --config "${PY_CONFIG}" --cosine_max_len 5120
+        --num_processes="${GPU_COUNT}" "${PY_SCRIPT}" --config "${PY_CONFIG}" --cosine_max_len 4096
 fi
 
 echo "END TIME: $(date)"
