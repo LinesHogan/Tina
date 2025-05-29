@@ -430,7 +430,7 @@ class GRPOTrainer(Trainer):
                     use_pos_temp = current_grpo_args.use_positional_temp_sampling
                     pos_temp_map = {}
                     if use_pos_temp and current_grpo_args.positional_temp_config:
-                        pos_temp_map = {pos: temp for pos, temp in current_grpo_args.positional_temp_config}
+                        pos_temp_map = {item[0]: item[1] for item in current_grpo_args.positional_temp_config}
 
                     # Conditional token sampling config
                     use_cond_temp = current_grpo_args.use_conditional_token_temp_sampling
