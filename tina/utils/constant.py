@@ -26,4 +26,5 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_limr_32_rank_lora_divers_2": "knoveleng/open-rs",
     "curated_limr_32_rank_full_divers": "GAIR/LIMR",
     "curated_limr_32_rank_full_divers_2": "knoveleng/open-rs",
+    "curated_limr_32_rank_full_divers_3": "GAIR/LIMR",
 }
