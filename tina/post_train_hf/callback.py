@@ -69,7 +69,7 @@ class FixedPromptEvaluationCallback(TrainerCallback):
 class GradientClippingLoggerCallback(TrainerCallback):
     def on_step_end(self, args, state, control, model=None, processing_class=None, **kwargs):
         self.clipped_grad_norm = np.sqrt(sum(p.grad.data.norm(2).item() ** 2 for p in model.parameters() if p.grad is not None))
-        wandb.log({"clipped_grad_norm": self.clipped_grad_norm})
+        # wandb.log({"clipped_grad_norm": self.clipped_grad_norm})
 
     def on_log(self, args, state, control, logs=None, **kwargs):
         if logs is not None:
