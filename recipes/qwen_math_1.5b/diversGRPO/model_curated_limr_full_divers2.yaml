@@ -19,7 +19,7 @@ use_peft: false
 bf16: true
 use_vllm: true
 vllm_device: cuda:0
-vllm_gpu_memory_utilization: 0.7
+vllm_gpu_memory_utilization: 0.45
 vllm_max_model_len: 4096
 gradient_accumulation_steps: 8
 gradient_checkpointing: true
