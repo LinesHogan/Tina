@@ -308,7 +308,7 @@ class GRPOConfig(TrainingArguments):
         },
     )
     conditional_temp_value: float = field(
-        default=1.5, # 例如，触发时使用1.5的温度
+        default=1.2, # 例如，触发时使用1.5的温度
         metadata={
             "help": "The temperature value to use when conditional token sampling is triggered."
         },

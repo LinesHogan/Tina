@@ -27,4 +27,13 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_limr_32_rank_full_divers": "GAIR/LIMR",
     "curated_limr_32_rank_full_divers_2": "knoveleng/open-rs",
     "curated_limr_32_rank_full_divers_3": "GAIR/LIMR",
+    "curated_limr_full_divers_4(high_lr)": "GAIR/LIMR",
+    "curated_limr_full_divers_5(super_hot_begin)": "GAIR/LIMR",
+    "curated_limr_full_divers_6(hot_begin_paragraph)": "GAIR/LIMR",
+    "curated_limr_full_divers_7(hot_paragraph)": "GAIR/LIMR",
+    "curated_limr_full_divers_8(baseline)": "GAIR/LIMR",
+    "curated_limr_full_divers_9(hot_lets)": "GAIR/LIMR", # 6771
+    "curated_limr_full_divers_10(high_bsz)": "GAIR/LIMR",
+    "curated_limr_full_divers_11(low_lr)": "GAIR/LIMR",
+    "curated_limr_full_divers_12(superhot_begin_1248)": "GAIR/LIMR",
 }
