@@ -313,6 +313,25 @@ class GRPOConfig(TrainingArguments):
             "help": "The temperature value to use when conditional token sampling is triggered."
         },
     )
+    
+    # --- 3. 在某些tokens组合后时高温采样 ---
+    
+    use_token_template_temp_sampling: bool = field(
+        default=False,
+        metadata={"help": "Enable different temperature sampling based on specific token templates."},
+    )
+    
+    template_temp_config: Optional[List[Tuple[List[int], float]]] = field(
+        default=None,
+        # 例如: [([100, 200], 1.5), ([300, 400], 1.2)] 表示如果生成的token序列包含100和200，则下一个token使用1.5的温度，
+        # 如果包含300和400，则下一个使用1.2的温度。
+        metadata={
+            "help": "List of (token_ids_sequence, temperature_value) tuples. "
+                    "The sequence is matched against the generated tokens."
+        },
+    )
+    
+    # --- 仅保存权重ckpt ---
 
     save_weights_only_checkpoint: bool = field(
         default=True,

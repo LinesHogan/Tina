@@ -439,6 +439,12 @@ class GRPOTrainer(Trainer):
                         cond_trigger_ids = set(current_grpo_args.conditional_temp_trigger_token_ids)
                     cond_temp_val = current_grpo_args.conditional_temp_value
 
+                    # Template temperature sampling config
+                    use_template_temp = current_grpo_args.use_token_template_temp_sampling
+                    template_temp_map = {}
+                    if use_template_temp and current_grpo_args.template_temp_config:
+                        template_temp_map = {item[0]: item[1] for item in current_grpo_args.template_temp_config}
+
                     base_temp = current_grpo_args.base_sampling_temperature
 
                     # 定义 logits_processor 函数
@@ -455,6 +461,15 @@ class GRPOTrainer(Trainer):
                                 greedy_next_token_id = torch.argmax(logits, dim=-1).item()
                                 if greedy_next_token_id in cond_trigger_ids:
                                     effective_temperature = cond_temp_val
+                        elif use_template_temp and template_temp_map:
+                            # Check if any token sequence in template_temp_map matches the end of the current token sequence
+                            matched_templates = [
+                                (seq, temp) for seq, temp in template_temp_map.items()
+                                if len(token_ids) >= len(seq) and token_ids[-len(seq):] == seq
+                            ]
+                            if matched_templates:
+                                # If multiple templates match, take the first one (or you could choose longest match)
+                                effective_temperature = matched_templates[0][1]
 
                         # 应用温度调整 logits = logits / T
                         # 必须确保 effective_temperature 是正数
