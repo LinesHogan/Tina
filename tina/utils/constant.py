@@ -36,4 +36,6 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_limr_full_divers_10(high_bsz)": "GAIR/LIMR",
     "curated_limr_full_divers_11(low_lr)": "GAIR/LIMR",
     "curated_limr_full_divers_12(superhot_begin_1248)": "GAIR/LIMR",
+    "curated_limr_full_divers_13(hot_after_paragraph)": "GAIR/LIMR",
+    "curated_limr_full_divers_14(nice_run)": "GAIR/LIMR",
 }

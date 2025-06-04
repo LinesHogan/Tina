@@ -1,5 +1,5 @@
 # check ./tina/utils/constant.py
-model_post_train_dataset_name: curated_limr_full_divers_12(superhot_begin_1248)
+model_post_train_dataset_name: curated_limr_full_divers_14(nice_run)
 model_post_train_type: grpo
 rl_post_train_reward_funcs:
 - format
@@ -21,7 +21,7 @@ use_vllm: true
 vllm_device: cuda:0
 vllm_gpu_memory_utilization: 0.45
 vllm_max_model_len: 4096
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 8 # 看起来到后期reward收敛了，那不如少一半step
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
@@ -29,7 +29,7 @@ log_level: info
 logging_first_step: true
 logging_steps: 1
 logging_strategy: steps
-log_completions: true
+log_completions: false
 push_to_hub: false
 hub_strategy: every_save
 hub_private_repo: true
@@ -57,7 +57,19 @@ save_weights_only_checkpoint: true
 seed: 42
 temperature: 0.9
 warmup_ratio: 0.1
+
 use_custom_temp_sampling: true
 base_sampling_temperature: 0.9
 use_positional_temp_sampling: true
-positional_temp_config: [(0, 1.5), (100, 1.2), (200, 1.2), (400, 1.2), (800, 1.2)]
+positional_temp_config: [(0, 1.6)]
+use_conditional_token_temp_sampling: true
+conditional_temp_trigger_token_ids: [10061, 3197, 1205, 1249] # \n
+conditional_temp_value: 1.2
+use_token_template_temp_sampling: true
+template_temp_config: [([624], 1.2), ([4192], 1.2), ([382], 1.2), ([271], 1.2), ([198], 1.2), ([1939], 1.2), ([5267], 1.2), ([30831], 1.2), ([27901], 1.2), ([2219], 1.2), ([4894], 1.2), ([10061], 1.2), ([3197], 1.2), ([1205], 1.2), ([1249], 1.2)]
+
+# (624, '.\n')  (4192, '.\n\n\n') (382, '.\n\n')
+# (271, '\n\n') (198, '\n')
+# (1939, '?\n\n') (5267, '?\n') (30831, '?\n\n\n')
+# (27901, '!\n\n\n') (2219, '!\n\n') (4894, '!\n')
+# 口癖： (10061, 'Let') (3197, ' When') (1205, ' We') (1249, 'To')
