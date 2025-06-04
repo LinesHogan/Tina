@@ -465,7 +465,7 @@ class GRPOTrainer(Trainer):
                             # Check if any token sequence in template_temp_map matches the end of the current token sequence
                             matched_templates = [
                                 (seq, temp) for seq, temp in template_temp_map.items()
-                                if len(token_ids) >= len(seq) and token_ids[-len(seq):] == seq
+                                if len(token_ids) >= len(seq) and token_ids[-len(seq):] == list(seq)
                             ]
                             if matched_templates:
                                 # If multiple templates match, take the first one (or you could choose longest match)
