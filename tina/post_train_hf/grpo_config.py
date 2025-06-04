@@ -308,8 +308,17 @@ class GRPOConfig(TrainingArguments):
         },
     )
     conditional_temp_value: float = field(
-        default=1.2, # 例如，触发时使用1.5的温度
+        default=1.2, # 例如，触发时使用1.2的温度
         metadata={
             "help": "The temperature value to use when conditional token sampling is triggered."
+        },
+    )
+
+    save_weights_only_checkpoint: bool = field(
+        default=True,
+        metadata={
+            "help": "If True, and if full-parameter training (not PEFT) is being used, "
+                    "save only the model weights in checkpoints, excluding optimizer and scheduler states. "
+                    "This helps reduce checkpoint size."
         },
     )

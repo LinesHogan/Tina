@@ -26,7 +26,10 @@ from tina.utils.prompt import OPEN_R1_SYSTEM_PROMPT, OPEN_RS_SYSTEM_PROMPT
 
 def main():
     parser = TrlParser((ModelPTConfig, GRPOConfig, ModelConfig))
-    pt_args, training_args, model_args = parser.parse_args_and_config()
+    args = parser.parse_args_and_config()
+    pt_args: ModelPTConfig = args[0]
+    training_args: GRPOConfig = args[1]
+    model_args: ModelConfig = args[2]
     set_seed(training_args.seed)
 
     os.environ["WANDB_PROJECT"] = "tina_model_post_training"
@@ -216,8 +219,27 @@ def main():
     train_metrics = train_result.metrics
     trainer.log_metrics("train", train_metrics)
     trainer.save_metrics("train", train_metrics)
-    trainer.save_state()
-    trainer.push_to_hub(commit_message=f"Add checkpoint {training_args.max_steps} post-trained on {pt_args.model_post_train_dataset_name}")
+    if training_args.save_weights_only_checkpoint:
+        trainer.save_model(training_args.output_dir)
+    else:
+        trainer.save_state()
+    # trainer.push_to_hub(commit_message=f"Add checkpoint {training_args.max_steps} post-trained on {pt_args.model_post_train_dataset_name}")
+    if training_args.push_to_hub:
+        logger.info(f"Attempting to push model to Hugging Face Hub repo: {training_args.hub_model_id}")
+        try:
+            trainer.push_to_hub(commit_message=f"Add checkpoint {training_args.max_steps} post-trained on {pt_args.model_post_train_dataset_name}")
+            logger.info("Model pushed to hub successfully.")
+        except Exception as e:
+            # Log the error and the problematic repo_id for easier debugging if pushing is intended
+            logger.error(f"Failed to push to hub: {e}")
+            logger.error(f"Repo ID used: {training_args.hub_model_id}")
+            logger.error(
+                "If pushing was intended, please ensure the hub_model_id in your YAML "
+                "and its construction in the script (around line 64 of diversGRPO.py) "
+                "results in a valid format (e.g., 'namespace/repo-name')."
+            )
+    else:
+        logger.info("Skipping push_to_hub as per configuration (push_to_hub: False).")
 
     del trainer
     torch.cuda.empty_cache()
