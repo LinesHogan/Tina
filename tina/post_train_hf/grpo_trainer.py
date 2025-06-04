@@ -443,7 +443,7 @@ class GRPOTrainer(Trainer):
                     use_template_temp = current_grpo_args.use_token_template_temp_sampling
                     template_temp_map = {}
                     if use_template_temp and current_grpo_args.template_temp_config:
-                        template_temp_map = {item[0]: item[1] for item in current_grpo_args.template_temp_config}
+                        template_temp_map = {tuple(item[0]): item[1] for item in current_grpo_args.template_temp_config}
 
                     base_temp = current_grpo_args.base_sampling_temperature
 
