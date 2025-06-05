@@ -32,7 +32,8 @@ export PYTHONPATH="${HOME_DIR}":$PYTHONPATH
 export PYTHONPATH="${HOME_DIR}/${CORE_POSTFIX}":$PYTHONPATH
 mkdir -p "${HOME_PREFIX}/${PROJECT_NAME}"
 
-export CKPT_DIR="${PROJECT_DIR}/ckpts"
+# export CKPT_DIR="${PROJECT_DIR}/ckpts"
+export CKPT_DIR="/scratch/mas/zengyuanhao/ckpt"
 export DATA_DIR="${PROJECT_DIR}/datasets"
 export OUTPUT_DIR="${PROJECT_DIR}/outputs"
 export LOGGING_DIR="${PROJECT_DIR}/logs"
