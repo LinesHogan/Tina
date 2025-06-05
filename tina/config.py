@@ -19,3 +19,13 @@ class ModelPTConfig:
     cosine_max_len: int = field(default=1000)
     repetition_n_grams: int = field(default=3)
     repetition_max_penalty: float = field(default=-1.0)
+    
+    # below for interesting experiments
+    random_reward_min: float = field(
+        default=0.0,
+        metadata={"help": "Minimum value for the random range reward."}
+    )
+    random_reward_max: float = field(
+        default=1.0,
+        metadata={"help": "Maximum value for the random range reward."}
+    )

@@ -1,6 +1,7 @@
 import math
 import re
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, List
+import random
 
 from latex2sympy2_extended import NormalizationConfig
 from math_verify import LatexExtractionConfig, parse, verify
@@ -296,3 +297,24 @@ def get_repetition_penalty_reward(ngram_size: int, max_penalty: float):
         return rewards
 
     return repetition_penalty_reward
+
+def get_random_range_reward(min_val: float, max_val: float):
+    """
+    Factory for a reward function that returns a random value within a specified range [min_val, max_val].
+    """
+    if min_val > max_val:
+        raise ValueError(
+            f"min_val ({min_val}) cannot be greater than max_val ({max_val}) for random_range_reward."
+        )
+
+    def random_range_reward_func(completions: List, solution: List, **kwargs) -> List[Optional[float]]:
+        """
+        Assigns a random reward to each completion.
+        The content of completions and solution is ignored for this reward type.
+        """
+        num_completions = len(completions)
+        # Generate a random reward for each completion in the batch
+        rewards = [random.uniform(min_val, max_val) for _ in range(num_completions)]
+        return rewards
+
+    return random_range_reward_func

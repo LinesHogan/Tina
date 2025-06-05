@@ -18,7 +18,7 @@ from tina.post_train_hf.grpo_config import GRPOConfig # use this new one for Dr.
 from tina.config import ModelPTConfig
 from tina.post_train_hf.callback import FixedPromptEvaluationCallback, PushToHubRevisionCallback, GradientClippingLoggerCallback
 from tina.post_train_hf.preprocess import make_conv_for_grpo
-from tina.post_train_hf.rewards import accuracy_reward, format_reward, tag_count_reward, len_reward, reasoning_steps_reward, get_cosine_scaled_reward, get_repetition_penalty_reward
+from tina.post_train_hf.rewards import accuracy_reward, format_reward, tag_count_reward, len_reward, reasoning_steps_reward, get_cosine_scaled_reward, get_repetition_penalty_reward, get_random_range_reward
 from tina.utils.chat_template import DEFAULT_CHAT_TEMPLATE, REASON_CHAT_TEMPLATE
 from tina.utils.constant import RL_POST_TRAIN_DATASET_MAP
 from tina.utils.prompt import OPEN_R1_SYSTEM_PROMPT, OPEN_RS_SYSTEM_PROMPT
@@ -173,6 +173,10 @@ def main():
         "repetition_penalty": get_repetition_penalty_reward(
             ngram_size=pt_args.repetition_n_grams,
             max_penalty=pt_args.repetition_max_penalty,
+        ),
+        "random_range": get_random_range_reward(
+            min_value=pt_args.random_reward_min,
+            max_value=pt_args.random_reward_max,
         ),
     }
     rl_reward_funcs = [RL_POST_TRAIN_REWARD_MAP[func] for func in pt_args.rl_post_train_reward_funcs]
