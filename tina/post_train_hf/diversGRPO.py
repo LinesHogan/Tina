@@ -175,8 +175,8 @@ def main():
             max_penalty=pt_args.repetition_max_penalty,
         ),
         "random_range": get_random_range_reward(
-            min_value=pt_args.random_reward_min,
-            max_value=pt_args.random_reward_max,
+            min_val=pt_args.random_reward_min,
+            max_val=pt_args.random_reward_max,
         ),
     }
     rl_reward_funcs = [RL_POST_TRAIN_REWARD_MAP[func] for func in pt_args.rl_post_train_reward_funcs]
