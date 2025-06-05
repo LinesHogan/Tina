@@ -1,5 +1,5 @@
 # check ./tina/utils/constant.py
-model_post_train_dataset_name: curated_limr_full_divers_15(random_run_symmery)
+model_post_train_dataset_name: curated_limr_full_divers_15(random_run_symmetry)
 model_post_train_type: grpo
 rl_post_train_reward_funcs:
 - random_range
