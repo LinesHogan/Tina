@@ -93,7 +93,7 @@ def main():
 
     model_post_train_dataset_name = RL_POST_TRAIN_DATASET_MAP[pt_args.model_post_train_dataset_name]
     
-    file_path = pt_args.model_post_train_dataset_name
+    file_path = model_post_train_dataset_name
     print(f"检查文件路径: {file_path}")
     print(f"当前工作目录: {os.getcwd()}")
     print(f"绝对路径: {os.path.abspath(file_path)}")
