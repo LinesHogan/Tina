@@ -92,18 +92,9 @@ def main():
     tokenizer.chat_template = REASON_CHAT_TEMPLATE
 
     model_post_train_dataset_name = RL_POST_TRAIN_DATASET_MAP[pt_args.model_post_train_dataset_name]
-    
-    file_path = model_post_train_dataset_name
-    print(f"检查文件路径: {file_path}")
-    print(f"当前工作目录: {os.getcwd()}")
-    print(f"绝对路径: {os.path.abspath(file_path)}")
-    print(f"路径存在: {os.path.exists(file_path)}")
-    print(f"是文件: {os.path.isfile(file_path)}")
-    print(f"是目录: {os.path.isdir(file_path)}")
-
     if pt_args.model_post_train_dataset_config is not None:
         train_dataset = load_dataset(model_post_train_dataset_name, split="train", name=pt_args.model_post_train_dataset_config)
-    elif os.path.isfile(pt_args.model_post_train_dataset_name):
+    elif os.path.isfile(model_post_train_dataset_name):
         train_dataset = load_dataset("json", data_files=pt_args.model_post_train_dataset_name)
     else:
         train_dataset = load_dataset(model_post_train_dataset_name, split="train")
