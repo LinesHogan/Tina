@@ -95,7 +95,7 @@ def main():
     if pt_args.model_post_train_dataset_config is not None:
         train_dataset = load_dataset(model_post_train_dataset_name, split="train", name=pt_args.model_post_train_dataset_config)
     elif os.path.isfile(model_post_train_dataset_name):
-        train_dataset = load_dataset("json", data_files=model_post_train_dataset_name)
+        train_dataset = load_dataset("json", data_files=model_post_train_dataset_name, split="train")
     else:
         train_dataset = load_dataset(model_post_train_dataset_name, split="train")
     # required by GRPOTrainer: (prompt, solution) columns
