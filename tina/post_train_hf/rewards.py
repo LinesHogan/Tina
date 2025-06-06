@@ -332,6 +332,6 @@ def str_match_reward(completions: List[Dict[str, str]], solution: List[str], **k
             answer_content = match.group(1).strip()
             if sol.strip().lower() in answer_content.lower():
                 rewards.append(1.0)
-            else:
-                rewards.append(0.0)
+        else:
+            rewards.append(0.0)  # No answer found in completion
     return rewards
