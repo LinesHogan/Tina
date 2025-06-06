@@ -43,5 +43,5 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_limr_full_divers_17(cosine_warmup_temp_schedule)": "GAIR/LIMR",
     
     # experiments for salt
-    "salt_exp1": "training_data/pararel_unsure.json",
+    "salt_exp1": "./training_data/pararel_unsure.json",
 }
