@@ -318,3 +318,20 @@ def get_random_range_reward(min_val: float, max_val: float):
         return rewards
 
     return random_range_reward_func
+
+def str_match_reward(completions: List[Dict[str, str]], solution: List[str], **kwargs) -> List[Optional[float]]:
+    """
+    Reward function that checks if the completion matches the ground truth string exactly.
+    Returns 1.0 for exact matches, 0.0 for non-matches.
+    """
+    contents = [completion[0]["content"] for completion in completions]
+    rewards = []
+    for content, sol in zip(contents, solution):
+        match = re.search(r"<answer>(.*?)</answer>", content, re.DOTALL)
+        if match:
+            answer_content = match.group(1).strip()
+            if sol.strip().lower() in answer_content.lower():
+                rewards.append(1.0)
+            else:
+                rewards.append(0.0)
+    return rewards

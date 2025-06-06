@@ -341,3 +341,20 @@ class GRPOConfig(TrainingArguments):
                     "This helps reduce checkpoint size."
         },
     )
+    
+    # --- 支持自定义SYSTEM PROMPT&EVALUATION PROMPT&CUSTOM REWARD ---
+    
+    custom_system_prompt: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "Custom system prompt to use for the model. If provided, this will override the default system "
+                    "prompt used in the GRPOTrainer."
+        },
+    )
+    custom_evaluation_prompt: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "Custom evaluation prompt to use for the model. If provided, this will override the default "
+                    "evaluation prompt used in the GRPOTrainer."
+        },
+    )

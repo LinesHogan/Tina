@@ -18,10 +18,10 @@ from tina.post_train_hf.grpo_config import GRPOConfig # use this new one for Dr.
 from tina.config import ModelPTConfig
 from tina.post_train_hf.callback import FixedPromptEvaluationCallback, PushToHubRevisionCallback, GradientClippingLoggerCallback
 from tina.post_train_hf.preprocess import make_conv_for_grpo
-from tina.post_train_hf.rewards import accuracy_reward, format_reward, tag_count_reward, len_reward, reasoning_steps_reward, get_cosine_scaled_reward, get_repetition_penalty_reward, get_random_range_reward
+from tina.post_train_hf.rewards import accuracy_reward, format_reward, tag_count_reward, len_reward, reasoning_steps_reward, get_cosine_scaled_reward, get_repetition_penalty_reward, get_random_range_reward, str_match_reward
 from tina.utils.chat_template import DEFAULT_CHAT_TEMPLATE, REASON_CHAT_TEMPLATE
 from tina.utils.constant import RL_POST_TRAIN_DATASET_MAP
-from tina.utils.prompt import OPEN_R1_SYSTEM_PROMPT, OPEN_RS_SYSTEM_PROMPT
+from tina.utils.prompt import OPEN_R1_SYSTEM_PROMPT, OPEN_RS_SYSTEM_PROMPT, CUSTOM_SYSTEM_PROMPT, CUSTOM_EVALUATION_PROMPT, FIXED_PROMPT_FOR_EVALUATION
 
 
 def main():
@@ -94,6 +94,8 @@ def main():
     model_post_train_dataset_name = RL_POST_TRAIN_DATASET_MAP[pt_args.model_post_train_dataset_name]
     if pt_args.model_post_train_dataset_config is not None:
         train_dataset = load_dataset(model_post_train_dataset_name, split="train", name=pt_args.model_post_train_dataset_config)
+    elif os.path.isfile(pt_args.model_post_train_dataset_name):
+        train_dataset = load_dataset("json", data_files=pt_args.model_post_train_dataset_name)
     else:
         train_dataset = load_dataset(model_post_train_dataset_name, split="train")
     # required by GRPOTrainer: (prompt, solution) columns
@@ -126,6 +128,14 @@ def main():
         train_dataset = train_dataset.map(wrap_in_math)
 
     SYSTEM_PROMPT = OPEN_RS_SYSTEM_PROMPT if "open-rs" in model_post_train_dataset_name else OPEN_R1_SYSTEM_PROMPT
+    
+    if training_args.custom_system_prompt is not None:
+        logger.info(f"\nUsing custom system prompt: {training_args.custom_system_prompt}")
+        SYSTEM_PROMPT = training_args.custom_system_prompt
+    elif training_args.custom_evaluation_prompt is not None:
+        logger.info(f"\nUsing custom evaluation prompt: {training_args.custom_evaluation_prompt}")
+        EVALUATION_PROMPT = training_args.custom_evaluation_prompt
+    
     train_dataset = train_dataset.map(
         make_conv_for_grpo,
         fn_kwargs={"system_prompt": SYSTEM_PROMPT})
@@ -178,19 +188,22 @@ def main():
             min_val=pt_args.random_reward_min,
             max_val=pt_args.random_reward_max,
         ),
+        "str_match": str_match_reward,
     }
     rl_reward_funcs = [RL_POST_TRAIN_REWARD_MAP[func] for func in pt_args.rl_post_train_reward_funcs]
     training_args.reward_weights = pt_args.rl_post_train_reward_weights
 
     if model_args.use_peft:
         callbacks = [
-            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT, eval_steps=training_args.save_steps),
+            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT, eval_steps=training_args.save_steps,
+            prompt=training_args.custom_evaluation_prompt if training_args.custom_evaluation_prompt else FIXED_PROMPT_FOR_EVALUATION),
             # PushToHubRevisionCallback(dataset_name=pt_args.model_post_train_dataset_name, use_peft=model_args.use_peft)
         ]
     else:
         callbacks = [
             GradientClippingLoggerCallback(),
-            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT, eval_steps=training_args.save_steps),
+            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT, eval_steps=training_args.save_steps,
+            prompt=training_args.custom_evaluation_prompt if training_args.custom_evaluation_prompt else FIXED_PROMPT_FOR_EVALUATION),
             # PushToHubRevisionCallback(dataset_name=pt_args.model_post_train_dataset_name, use_peft=model_args.use_peft)
         ]
 
