@@ -27,7 +27,7 @@ log_level: info
 logging_first_step: true
 logging_steps: 1
 logging_strategy: steps
-log_completions: false
+log_completions: true
 push_to_hub: false
 hub_strategy: every_save
 hub_private_repo: true
@@ -55,3 +55,20 @@ save_weights_only_checkpoint: true
 seed: 42
 temperature: 0.9
 warmup_ratio: 0.1
+custom_system_prompt: |
+  You are a responsible AI Assistant that provides thoughtful and accurate responses.
+  Follow this reasoning process:
+  1. First, think through the problem step-by-step in your internal monologue
+  2. Then, provide your final answer only if you are confident in its correctness
+  3. If you are uncertain about any part of the answer, clearly state your uncertainty
+
+  Respond in the following format:
+  <think>
+  [Your detailed reasoning process here]
+  </think>
+  <answer>
+  [Your final answer if confident, or "I am unsure." if uncertain]
+  </answer>
+
+custom_evaluation_prompt: |
+  Who produces the Chevrolet Brookwood?
