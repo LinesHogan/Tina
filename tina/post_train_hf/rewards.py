@@ -335,5 +335,5 @@ def str_match_reward(completions: List[Dict[str, str]], solution: List[str], **k
             else:
                 rewards.append(0.0)
         else:
-            rewards.append(0.0)  # No answer found in completion
+            rewards.append(-1.0)  # No answer found in completion
     return rewards
