@@ -19,6 +19,7 @@ from collections import defaultdict
 from typing import Any, Callable, Optional, Sized, Union, Tuple, List, Dict
 from unittest.mock import patch
 
+import math
 import torch
 import torch.utils.data
 import transformers
@@ -454,13 +455,15 @@ class GRPOTrainer(Trainer):
 
                         # 优先应用位置相关的温度设置
                         if use_pos_temp and current_generated_length in pos_temp_map:
-                            effective_temperature = pos_temp_map[current_generated_length]
+                            # effective_temperature = pos_temp_map[current_generated_length]
+                            effective_temperature = self._get_scheduled_temperature(self.state.global_step, pos_temp_map[current_generated_length])
                         # 如果位置温度未应用，再检查条件token温度
                         elif use_cond_temp and cond_trigger_ids:
                             if logits.numel() > 0: # 确保 logits 不为空
                                 greedy_next_token_id = torch.argmax(logits, dim=-1).item()
                                 if greedy_next_token_id in cond_trigger_ids:
-                                    effective_temperature = cond_temp_val
+                                    # effective_temperature = cond_temp_val
+                                    effective_temperature = self._get_scheduled_temperature(self.state.global_step, cond_temp_val)
                         elif use_template_temp and template_temp_map:
                             # Check if any token sequence in template_temp_map matches the end of the current token sequence
                             matched_templates = [
@@ -469,7 +472,7 @@ class GRPOTrainer(Trainer):
                             ]
                             if matched_templates:
                                 # If multiple templates match, take the first one (or you could choose longest match)
-                                effective_temperature = matched_templates[0][1]
+                                effective_temperature = self._get_scheduled_temperature(self.state.global_step, matched_templates[0][1])
 
                         # 应用温度调整 logits = logits / T
                         # 必须确保 effective_temperature 是正数
@@ -592,6 +595,33 @@ class GRPOTrainer(Trainer):
             # This must be done after loading weights to ensure they correspond to the merged state.
             if is_peft_model(unwrapped_model):
                 unwrapped_model.unmerge_adapter()
+
+    def _get_scheduled_temperature(self, current_step: int, temp_eta_max: float) -> float:
+        """
+        Calculates the temperature for the current step based on the scheduler settings.
+        """
+        if not self.args.use_temp_scheduler:
+            return self.args.temp_eta_max # 传入的eta_temp是期望调度器调度的最大温度。如果不启用调度器，那么就应该当作不存在。
+        
+        auto_t_max = (self.args.max_steps * (1 - self.args.temp_warmup_ratio)) // self.args.temp_num_cycles
+        auto_warmup_steps = self.args.temp_warmup_ratio * auto_t_max
+        auto_eta_min = self.args.base_sampling_temperature
+        if current_step < auto_warmup_steps:
+            # Warmup phase
+            return self.args.base_sampling_temperature + \
+                   (temp_eta_max - self.args.base_sampling_temperature) * \
+                   (current_step / auto_warmup_steps)
+
+        # Total steps for all cycles
+        total_cycle_steps = self.args.temp_num_cycles * auto_t_max
+        if current_step < total_cycle_steps:
+            # Cosine decay with restarts
+            cycle_step = current_step % auto_t_max
+            cosine_decay = 0.5 * (1 + math.cos(math.pi * cycle_step / auto_t_max))
+            return auto_eta_min + (temp_eta_max - auto_eta_min) * cosine_decay
+        else:
+            # Final decay to a fixed value
+            return auto_eta_min
 
     def _prepare_inputs(self, inputs: dict[str, Union[torch.Tensor, Any]]) -> dict[str, Union[torch.Tensor, Any]]:
         device = self.accelerator.device

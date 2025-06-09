@@ -358,3 +358,22 @@ class GRPOConfig(TrainingArguments):
                     "evaluation prompt used in the GRPOTrainer."
         },
     )
+    
+    # --- 支持temperature schedule ---
+    
+    use_temp_scheduler: bool = field(
+        default=False,
+        metadata={"help": "Enable temperature scheduling."},
+    )
+    temp_warmup_ratio: float = field(
+        default=0.1,
+        metadata={"help": "Fraction of total steps for the warmup phase."},
+    )
+    temp_eta_max: float = field(
+        default=1.3,
+        metadata={"help": "Maximum temperature value for the cosine cycle."},
+    )
+    temp_num_cycles: int = field(
+        default=3,
+        metadata={"help": "Number of cosine cycles with restarts."},
+    )
