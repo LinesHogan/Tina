@@ -601,7 +601,7 @@ class GRPOTrainer(Trainer):
         Calculates the temperature for the current step based on the scheduler settings.
         """
         if not self.args.use_temp_scheduler:
-            return self.args.temp_eta_max # 传入的eta_temp是期望调度器调度的最大温度。如果不启用调度器，那么就应该当作不存在。
+            return temp_eta_max # 传入的eta_temp是期望调度器调度的最大温度。如果不启用调度器，那么就应该当作不存在。
         
         auto_t_max = (self.args.max_steps * (1 - self.args.temp_warmup_ratio)) // self.args.temp_num_cycles
         auto_warmup_steps = self.args.temp_warmup_ratio * auto_t_max

@@ -1,5 +1,5 @@
 # check ./tina/utils/constant.py
-model_post_train_dataset_name: curated_limr_full_divers_21(cosine_warmup_temp_schedule)
+model_post_train_dataset_name: curated_limr_full_divers_22(cosine_warmup_temp_schedule)
 model_post_train_type: grpo
 rl_post_train_reward_funcs:
 - format
@@ -29,13 +29,13 @@ log_level: info
 logging_first_step: true
 logging_steps: 1
 logging_strategy: steps
-log_completions: false
+log_completions: true
 push_to_hub: false
 hub_strategy: every_save
 hub_private_repo: true
 hub_model_id: dpsk-rl-diversGRPO
 
-learning_rate: 1e-05
+learning_rate: 5e-06
 lr_scheduler_type: cosine_with_min_lr
 lr_scheduler_kwargs:
   min_lr_rate: 0.1
@@ -67,20 +67,23 @@ conditional_temp_trigger_token_ids: [10061, 3197, 1205, 1249] # 口癖
 conditional_temp_value: 1.0
 use_token_template_temp_sampling: true
 template_temp_config: 
-  - [[624], 1.1]
-  - [[4192], 1.1]
-  - [[382], 1.1]
-  - [[271], 1.1]
-  - [[1939], 1.1]
-  - [[5267], 1.1]
-  - [[30831], 1.1]
-  - [[27901], 1.1]
-  - [[2219], 1.1]
-  - [[4894], 1.1]
-  - [[10061], 1.1]
-  - [[3197], 1.1]
-  - [[1205], 1.1]
-  - [[1249], 1.1]
+  - [[624], 1.2]
+  - [[4192], 1.2]
+  - [[382], 1.2]
+  - [[271], 1.2]
+  - [[1939], 1.2]
+  - [[5267], 1.2]
+  - [[30831], 1.2]
+  - [[27901], 1.2]
+  - [[2219], 1.2]
+  - [[4894], 1.2]
+  - [[10061], 1.2]
+  - [[3197], 1.2]
+  - [[1205], 1.2]
+  - [[1249], 1.2]
+use_temp_scheduler: true
+temp_warmup_ratio: 0.1
+temp_num_cycles: 3
 
 # (624, '.\n')  (4192, '.\n\n\n') (382, '.\n\n')
 # (271, '\n\n') (198, '\n') 观察到公式中有

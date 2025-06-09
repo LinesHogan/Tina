@@ -40,10 +40,12 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_limr_full_divers_14(nice_run)": "GAIR/LIMR",
     "curated_limr_full_divers_15(random_run_symmetry)": "GAIR/LIMR",
     "curated_limr_full_divers_16(random_run_neg)": "GAIR/LIMR",
-    "curated_limr_full_divers_17(cosine_warmup_temp_schedule)": "GAIR/LIMR",
+    "curated_limr_full_divers_17(deprecated)": "GAIR/LIMR",
     "curated_limr_full_divers_18(hot_begin_seed1)": "GAIR/LIMR",
     "curated_limr_full_divers_19(hot_begin_seed2)": "GAIR/LIMR",
     "curated_limr_full_divers_20(hot_begin_seed3)": "GAIR/LIMR",
+    "curated_limr_full_divers_21(cosine_warmup_temp_schedule)": "GAIR/LIMR",
+    "curated_limr_full_divers_22(temp_schedule_lowLR)": "GAIR/LIMR",
     # experiments for salt
     "salt_exp1": "./training_data/pararel_unsure.json",
     "salt_exp2": "./training_data/pararel_unsure.json",
