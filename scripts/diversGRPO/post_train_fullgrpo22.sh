@@ -15,7 +15,7 @@ echo "Number of GPUs: ${GPU_COUNT}"
 echo ""
 
 MODEL_NAME="qwen_math_1.5b"
-DATASET_NAME="curated_limr_full_divers20" # baseline
+DATASET_NAME="curated_limr_full_divers22" # baseline
 
 ## Main datasets
 #DATASET_NAME="curated_deepscaler"
