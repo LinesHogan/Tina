@@ -1,5 +1,5 @@
 # check ./tina/utils/constant.py
-model_post_train_dataset_name: curated_limr_full_divers_22(cosine_warmup_temp_schedule)
+model_post_train_dataset_name: curated_limr_full_divers_22(temp_schedule_lowLR)
 model_post_train_type: grpo
 rl_post_train_reward_funcs:
 - format
