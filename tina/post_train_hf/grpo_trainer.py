@@ -783,6 +783,9 @@ class GRPOTrainer(Trainer):
 
         self._metrics["reward"].append(rewards.mean().item())
         self._metrics["reward_std"].append(std_grouped_rewards.mean().item())
+        self._metrics["temperature_scheduler_scale"].append(
+            self._get_scheduled_temperature(self.state.global_step, 1)
+        )
 
         if (
             self.log_completions
@@ -825,7 +828,7 @@ class GRPOTrainer(Trainer):
         logits_to_keep = completion_ids.size(1)  # we only need to compute the logits for the completion tokens
 
         per_token_logps = self._get_per_token_logps(model, input_ids, attention_mask, logits_to_keep)
-
+        
         # Compute the KL divergence between the model and the reference model
         ref_per_token_logps = inputs["ref_per_token_logps"]
         per_token_kl = torch.exp(ref_per_token_logps - per_token_logps) - (ref_per_token_logps - per_token_logps) - 1
@@ -846,7 +849,12 @@ class GRPOTrainer(Trainer):
 
         mean_kl = ((per_token_kl * completion_mask).sum(dim=1) / completion_mask.sum(dim=1)).mean()
         self._metrics["kl"].append(self.accelerator.gather_for_metrics(mean_kl).mean().item())
-
+        
+        # Calculate per-token entropy: entropy = -log_prob
+        per_token_entropy = -per_token_logps
+        mean_entropy = ((per_token_entropy * completion_mask).sum(dim=1) / completion_mask.sum(dim=1)).mean()
+        self._metrics["per_token_entropy"].append(self.accelerator.gather_for_metrics(mean_entropy).mean().item())
+        
         return loss
 
     def prediction_step(self, model, inputs, prediction_loss_only, ignore_keys: Optional[list[str]] = None):
