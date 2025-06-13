@@ -373,3 +373,13 @@ class GRPOConfig(TrainingArguments):
         default=3,
         metadata={"help": "Number of cosine cycles with restarts."},
     )
+    
+    # --- 支持epsilon_high/ epsilon_low ---
+    epsilon_high: float = field(
+        default=0.2,
+        metadata={"help": "The high epsilon value for clip."},
+    )
+    epsilon_low: float = field(
+        default=0.2,
+        metadata={"help": "The low epsilon value for clip."},
+    )

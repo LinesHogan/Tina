@@ -237,10 +237,14 @@ def main():
     train_metrics = train_result.metrics
     trainer.log_metrics("train", train_metrics)
     trainer.save_metrics("train", train_metrics)
+    trainer.save_state()
+    import glob, shutil
     if training_args.save_weights_only_checkpoint:
-        trainer.save_model(training_args.output_dir)
-    else:
-        trainer.save_state()
+        global_step_dirs = glob.glob(os.path.join(training_args.output_dir, "*global_step*"))
+        for dir_path in global_step_dirs:
+            if os.path.isdir(dir_path):
+                shutil.rmtree(dir_path)
+            logger.info(f"Deleted global_step directory: {dir_path}")
     # trainer.push_to_hub(commit_message=f"Add checkpoint {training_args.max_steps} post-trained on {pt_args.model_post_train_dataset_name}")
     if training_args.push_to_hub:
         logger.info(f"Attempting to push model to Hugging Face Hub repo: {training_args.hub_model_id}")

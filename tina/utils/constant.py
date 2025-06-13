@@ -48,6 +48,8 @@ RL_POST_TRAIN_DATASET_MAP = {
     "curated_limr_full_divers_22(temp_schedule_lowLR)": "GAIR/LIMR",
     "curated_limr_full_divers_23(temp_schedule_lowerLR)": "GAIR/LIMR",
     "curated_limr_full_divers_24(temp_schedule_lowLR_lessedcay)": "GAIR/LIMR",
+    "curated_limr_full_divers_25(temp_schedule_lowerLR_transferVR)": "GAIR/LIMR",
+    "curated_limr_full_divers_26(temp_schedule_lowLR_lessedcay_transferVR)": "GAIR/LIMR",
     # experiments for salt
     "salt_exp1": "./training_data/pararel_unsure.json",
     "salt_exp2": "./training_data/pararel_unsure.json",
