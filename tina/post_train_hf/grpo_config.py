@@ -210,9 +210,29 @@ class GRPOConfig(TrainingArguments):
             "`transformers.TrainingArguments`."
         },
     )
+    vllm_enable_prefix_caching: Optional[bool] = field(
+        default=True,
+        metadata={
+            "help": "Whether to enable prefix caching in vLLM. If set to `True` (default), ensure that the model and "
+            "the hardware support this feature."
+        },
+    )
+    vllm_guided_decoding_regex: Optional[str] = field(
+        default=None,
+        metadata={"help": "Regex for vLLM guided decoding. If `None` (default), guided decoding is disabled."},
+    )
+    
     beta: float = field(
         default=0.04,
         metadata={"help": "KL coefficient."},
+    )
+    num_iterations: int = field(
+        default=1,
+        metadata={"help": "Number of iterations per batch (denoted as μ in the algorithm)."},
+    )
+    epsilon: float = field(
+        default=0.2,
+        metadata={"help": "Epsilon value for clipping."},
     )
     scale_rewards: bool = field(
         default=True,
@@ -238,7 +258,7 @@ class GRPOConfig(TrainingArguments):
         },
     )
     ref_model_mixup_alpha: float = field(
-        default=0.9,
+        default=0.6,
         metadata={
             "help": "α parameter from the TR-DPO paper, which controls the mix between the current policy and the "
             "previous reference policy during updates. The reference policy is updated according to the equation: "
