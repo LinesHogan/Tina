@@ -12,7 +12,7 @@ from transformers import set_seed, AutoModelForCausalLM, AutoTokenizer
 from transformers.trainer_utils import get_last_checkpoint
 
 from trl import ModelConfig, TrlParser # GRPOTrainer, GRPOConfig
-from tina.post_train_hf.grpo_trainer import GRPOTrainer # use this new one for Dr.GRPO
+from tina.post_train_hf.tina_grpo_trainer import GRPOTrainer # use this new one for Dr.GRPO
 from tina.post_train_hf.grpo_config import GRPOConfig # use this new one for Dr.GRPO
 
 from tina.config import ModelPTConfig
@@ -196,14 +196,14 @@ def main():
 
     if model_args.use_peft:
         callbacks = [
-            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT, eval_steps=training_args.save_steps,
+            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT if training_args.custom_evaluation_prompt is None else training_args.custom_evaluation_prompt, eval_steps=training_args.save_steps,
             prompt=training_args.custom_evaluation_prompt if training_args.custom_evaluation_prompt else FIXED_PROMPT_FOR_EVALUATION),
             # PushToHubRevisionCallback(dataset_name=pt_args.model_post_train_dataset_name, use_peft=model_args.use_peft)
         ]
     else:
         callbacks = [
             GradientClippingLoggerCallback(),
-            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT, eval_steps=training_args.save_steps,
+            FixedPromptEvaluationCallback(system_prompt=OPEN_R1_SYSTEM_PROMPT if training_args.custom_evaluation_prompt is None else training_args.custom_evaluation_prompt, eval_steps=training_args.save_steps,
             prompt=training_args.custom_evaluation_prompt if training_args.custom_evaluation_prompt else FIXED_PROMPT_FOR_EVALUATION),
             # PushToHubRevisionCallback(dataset_name=pt_args.model_post_train_dataset_name, use_peft=model_args.use_peft)
         ]

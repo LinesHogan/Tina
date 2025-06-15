@@ -1019,9 +1019,19 @@ class GRPOTrainer(Trainer):
         per_token_loss1 = coef_1 * advantages.unsqueeze(1)
         per_token_loss2 = coef_2 * advantages.unsqueeze(1)
         per_token_loss = -torch.min(per_token_loss1, per_token_loss2)
+        
+        mean_loss_in_adv = ((per_token_loss * completion_mask).sum(dim=1) / completion_mask.sum(dim=1)).mean()
+        self._metrics[mode]["loss_in_advantage"].append(
+            self.accelerator.gather_for_metrics(mean_loss_in_adv).mean().item()
+        )
+        
         if self.beta != 0.0:
             per_token_loss = per_token_loss + self.beta * per_token_kl
         loss = (per_token_loss * completion_mask).sum() / completion_mask.sum()
+        
+        self._metrics[mode]["advantages"].append(
+            self.accelerator.gather_for_metrics(advantages.unsqueeze(1)).mean().item()
+        )
 
         # Log the metrics
         mode = "eval" if self.control.should_evaluate else "train"
@@ -1029,7 +1039,8 @@ class GRPOTrainer(Trainer):
         if self.beta != 0.0:
             mean_kl = ((per_token_kl * completion_mask).sum(dim=1) / completion_mask.sum(dim=1)).mean()
             self._metrics[mode]["kl"].append(self.accelerator.gather_for_metrics(mean_kl).mean().item())
-
+            self._metrics[mode]["loss_in_kl"].append(self.accelerator.gather_for_metrics(mean_kl).mean().item() * self.beta)
+        
         # Calculate per-token entropy: entropy = -log_prob
         per_token_entropy = -per_token_logps
         mean_entropy = ((per_token_entropy * completion_mask).sum(dim=1) / completion_mask.sum(dim=1)).mean()

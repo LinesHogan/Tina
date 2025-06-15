@@ -11,7 +11,7 @@ from transformers import set_seed, AutoModelForCausalLM, AutoTokenizer
 from transformers.trainer_utils import get_last_checkpoint
 
 from trl import ModelConfig, TrlParser # GRPOTrainer, GRPOConfig
-from tina.post_train_hf.grpo_trainer import GRPOTrainer # use this new one for Dr.GRPO
+from tina.post_train_hf.tina_grpo_trainer import GRPOTrainer # use this new one for Dr.GRPO
 from tina.post_train_hf.grpo_config import GRPOConfig # use this new one for Dr.GRPO
 
 from tina.config import ModelPTConfig

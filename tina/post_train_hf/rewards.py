@@ -26,7 +26,7 @@ def accuracy_reward(completions: list[list[dict[str, str]]], solution: list[str]
                             nits=False,
                             malformed_operators=False,
                             basic_latex=True,
-                            equations=True,
+                            # equations=True, # 2025-06-14 03:37:10 - WARNING - latex2sympy2_extended.math_normalization - equations is deprecated, as it handled by the parser now
                             boxed="all",
                             units=True,
                         ),
