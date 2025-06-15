@@ -179,3 +179,6 @@ cython_debug/
 HilbertConstraint/
 
 tina/post_train_hf/old_grpo_trainer.py
+training_data/pararel_unsure_ID.json
+training_data/pararel_unsure_OOD.json
+evaluate.py
